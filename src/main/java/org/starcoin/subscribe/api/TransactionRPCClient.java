@@ -15,26 +15,25 @@ import java.util.Arrays;
 
 public class TransactionRPCClient {
 
+    private static Logger log = LoggerFactory.getLogger(SubscribeApplication.class);
     JSONRPC2Session session;
 
-    private static Logger log = LoggerFactory.getLogger(SubscribeApplication.class);
-
-    public TransactionRPCClient(URL baseUrl){
+    public TransactionRPCClient(URL baseUrl) {
         session = new JSONRPC2Session(baseUrl);
     }
 
     public PendingTransaction getTransaction(String hash) throws JSONRPC2SessionException {
         int requestID = 0;
-        JSONRPC2Request request = new JSONRPC2Request("txpool.pending_txn",Arrays.asList(hash), requestID);
+        JSONRPC2Request request = new JSONRPC2Request("txpool.pending_txn", Arrays.asList(hash), requestID);
         JSONRPC2Response response = null;
         PendingTransaction transaction = null;
 
         response = session.send(request);
 
-        if (response.indicatesSuccess()){
-            if(response!=null&&response.getResult()!=null){
+        if (response.indicatesSuccess()) {
+            if (response != null && response.getResult() != null) {
                 String result = response.getResult().toString();
-                transaction=JSON.parseObject(result, PendingTransaction.class);
+                transaction = JSON.parseObject(result, PendingTransaction.class);
             }
         } else
             log.info(response.getError().getMessage());

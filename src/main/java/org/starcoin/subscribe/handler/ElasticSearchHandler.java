@@ -23,11 +23,9 @@ import java.io.IOException;
 @Service
 public class ElasticSearchHandler {
 
-    private static Logger LOG = LoggerFactory.getLogger(ElasticSearchHandler.class);
-
-    private static final String PendingTxnIndex = "pending_txns";
     public static final String TRANSACTION_INDEX = "txn_infos";
-
+    private static final String PENDING_TXN_INDEX = "pending_txns";
+    private static Logger LOG = LoggerFactory.getLogger(ElasticSearchHandler.class);
     @Autowired
     private RestHighLevelClient client;
 
@@ -35,7 +33,7 @@ public class ElasticSearchHandler {
         if (transaction == null) {
             return;
         }
-        if (checkExists(network, transaction))
+        if (!checkExists(network, transaction))
             addToEs(network, transaction);
     }
 
@@ -49,14 +47,14 @@ public class ElasticSearchHandler {
                 return false;
             }
         } catch (Exception e) {
-            LOG.warn("access es failed",e);
+            LOG.warn("access es failed", e);
             return false;
         }
     }
 
     private void addToEs(String network, PendingTransaction transaction) {
         try {
-            IndexRequest request = new IndexRequest(ServiceUtils.getIndex(network, PendingTxnIndex));
+            IndexRequest request = new IndexRequest(ServiceUtils.getIndex(network, PENDING_TXN_INDEX));
             request.id(transaction.getTransactionHash());
 
             String doc = JSON.toJSONString(transaction);
