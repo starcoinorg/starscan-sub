@@ -35,7 +35,7 @@ public class ElasticSearchHandler {
         if (transaction == null) {
             return;
         }
-        if (!checkExists(network, transaction))
+        if (checkExists(network, transaction))
             addToEs(network, transaction);
     }
 
