@@ -43,6 +43,10 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.75</version>
         </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

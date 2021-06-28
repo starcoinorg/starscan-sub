@@ -8,7 +8,7 @@ import com.thetransactioncompany.jsonrpc2.client.JSONRPC2SessionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.starcoin.subscribe.SubscribeApplication;
-import org.starcoin.subscribe.bean.Transaction;
+import org.starcoin.subscribe.bean.PendingTransaction;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -23,18 +23,18 @@ public class TransactionRPCClient {
         session = new JSONRPC2Session(baseUrl);
     }
 
-    public Transaction getTransaction(String hash) throws JSONRPC2SessionException {
+    public PendingTransaction getTransaction(String hash) throws JSONRPC2SessionException {
         int requestID = 0;
         JSONRPC2Request request = new JSONRPC2Request("txpool.pending_txn",Arrays.asList(hash), requestID);
         JSONRPC2Response response = null;
-        Transaction transaction = null;
+        PendingTransaction transaction = null;
 
         response = session.send(request);
 
         if (response.indicatesSuccess()){
             if(response!=null&&response.getResult()!=null){
                 String result = response.getResult().toString();
-                transaction=JSON.parseObject(result, Transaction.class);
+                transaction=JSON.parseObject(result, PendingTransaction.class);
             }
         } else
             log.info(response.getError().getMessage());

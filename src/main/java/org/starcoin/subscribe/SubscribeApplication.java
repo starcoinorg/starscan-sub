@@ -1,25 +1,28 @@
 package org.starcoin.subscribe;
 
-import com.thetransactioncompany.jsonrpc2.client.JSONRPC2SessionException;
-import io.reactivex.Flowable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.starcoin.subscribe.api.StarcoinSubscriber;
-import org.starcoin.subscribe.api.TransactionRPCClient;
-import org.starcoin.subscribe.bean.PendingTransactionNotification;
-import org.web3j.protocol.websocket.WebSocketService;
-
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.starcoin.subscribe.handler.ElasticSearchHandler;
+import org.starcoin.subscribe.handler.SubscribeHandler;
 
 @SpringBootApplication
 public class SubscribeApplication implements CommandLineRunner {
 
     private static Logger LOG = LoggerFactory.getLogger(SubscribeApplication.class);
+
+    @Value("${starcoin.seeds}")
+    private String[] seeds;
+
+    @Value("${starcoin.network}")
+    private String network;
+
+    @Autowired
+    private ElasticSearchHandler elasticSearchHandler;
 
     public static void main(String[] args) {
         LOG.info("STARTING THE APPLICATION");
@@ -28,18 +31,11 @@ public class SubscribeApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws ConnectException, MalformedURLException, JSONRPC2SessionException {
+    public void run(String... args)  {
         LOG.info("EXECUTING : command line runner");
-        WebSocketService service = new WebSocketService("ws://localhost:9870",true);
-        service.connect();
-        StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
-        Flowable<PendingTransactionNotification> flowableTxns = subscriber.newPendingTransactionsNotifications();
-        TransactionRPCClient rpc = new TransactionRPCClient(new URL("http://localhost:9850"));
-
-        for(PendingTransactionNotification notifications:flowableTxns.blockingIterable()){
-            for(String notification:notifications.getParams().getResult()){
-                rpc.getTransaction(notification);
-            }
+        for(String seed:seeds){
+            Thread handlerThread = new Thread(new SubscribeHandler(seed,network,elasticSearchHandler));
+            handlerThread.start();
         }
     }
 
