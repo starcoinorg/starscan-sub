@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: starscan-sub
-          image: starcoin/starcoin_scan_sub:sha-f9707a9
+          image: starcoin/starcoin_scan_sub:sha-e5dff1d
           ports:
             - containerPort: 8200
           env:

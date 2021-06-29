@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: starscan-sub-deployment
-  namespace: starcoin-barnard
+  namespace: starcoin-main
   labels:
     app: starscan-sub
 spec:
@@ -22,15 +22,15 @@ spec:
             - containerPort: 8200
           env:
             - name: HOSTS
-              value: "barnard1.seed.starcoin.org,barnard2.seed.starcoin.org"
+              value: "proxima1.seed.starcoin.org,proxima2.seed.starcoin.org,proxima3.seed.starcoin.org"
             - name: NETWORK
-              value: "barnard"
+              value: "proxima"
             - name: STARCOIN_ES_URL
-              value: "es-cn-n6w24qcc200cq97zg.public.elasticsearch.aliyuncs.com"
+              value: "search-starcoin-es2-47avtmhexhbg7qtynzebcnnu64.ap-northeast-1.es.amazonaws.com"
             - name: STARCOIN_ES_PROTOCOL
-              value: "http"
+              value: "https"
             - name: STARCOIN_ES_PORT
-              value: "9200"
+              value: "443"
             - name: STARCOIN_ES_USER
               value: elastic
             - name: STARCOIN_ES_PWD

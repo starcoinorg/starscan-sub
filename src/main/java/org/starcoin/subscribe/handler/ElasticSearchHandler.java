@@ -33,8 +33,12 @@ public class ElasticSearchHandler {
         if (transaction == null) {
             return;
         }
-        if (!checkExists(network, transaction))
+        if (!checkExists(network, transaction)) {
             addToEs(network, transaction);
+        } else {
+            LOG.warn("transaction exist: {}", transaction.getTransactionHash());
+        }
+
     }
 
     private boolean checkExists(String network, PendingTransaction transaction) {
@@ -72,9 +76,9 @@ public class ElasticSearchHandler {
 
             if (indexResponse != null) {
                 if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
-                    LOG.info("add new doc succ");
+                    LOG.info("add transaction success: {}", transaction);
                 } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-                    LOG.info("update doc succ");
+                    LOG.info("update transaction success:{}", transaction);
                 }
                 ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
                 if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
