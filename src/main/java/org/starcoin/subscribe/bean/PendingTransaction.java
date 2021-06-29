@@ -12,6 +12,12 @@ public class PendingTransaction {
     @JSONField(name = "raw_txn")
     private RawTransaction rawTransaction;
 
+    private long timestamp;
+
+    public PendingTransaction(){
+        timestamp = System.currentTimeMillis();
+    }
+
     public Authenticator getAuthenticator() {
         return authenticator;
     }
@@ -34,5 +40,13 @@ public class PendingTransaction {
 
     public void setRawTransaction(RawTransaction rawTransaction) {
         this.rawTransaction = rawTransaction;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }
