@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Kind {
 
+    public static final Kind PendingTxn = new Kind(2, "newPendingTransactions");
     private int type;
-
     @JsonProperty("type_name")
     private String typeName;
-
-    public static final Kind PendingTxn = new Kind(2,"newPendingTransactions");
 
     public Kind(int type, String typeName) {
         this.type = type;

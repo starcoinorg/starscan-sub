@@ -17,7 +17,7 @@ public class StarcoinSubscriber {
         this.web3jService = web3jService;
     }
 
-    public Flowable<PendingTransactionNotification> newPendingTransactionsNotifications(){
+    public Flowable<PendingTransactionNotification> newPendingTransactionsNotifications() {
         return web3jService.subscribe(
                 new Request<>(
                         "starcoin_subscribe",
