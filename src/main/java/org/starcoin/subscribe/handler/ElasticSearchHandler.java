@@ -76,9 +76,9 @@ public class ElasticSearchHandler {
 
             if (indexResponse != null) {
                 if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
-                    LOG.info("add transaction success: {}", transaction);
+                    LOG.info("add transaction success: {}", transaction.getTransactionHash());
                 } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-                    LOG.info("update transaction success:{}", transaction);
+                    LOG.info("update transaction success:{}", transaction.getTransactionHash());
                 }
                 ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
                 if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
