@@ -1,5 +1,6 @@
 package org.starcoin.subscribe;
 
+import com.oracle.tools.packager.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class SubscribeApplication implements CommandLineRunner {
     @Value("${starcoin.network}")
     private String network;
 
+    @Value("${STARCOIN_ES_URL}")
+    private String esUrl;
+
     @Autowired
     private ElasticSearchHandler elasticSearchHandler;
 
@@ -33,6 +37,7 @@ public class SubscribeApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
+        LOG.info("es url is "+esUrl);
         for (String seed : seeds) {
             Thread handlerThread = new Thread(new SubscribeHandler(seed, network, elasticSearchHandler));
             handlerThread.start();
