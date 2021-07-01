@@ -62,7 +62,7 @@ public class ElasticSearchHandler {
             request.id(transaction.getTransactionHash());
 
             String doc = JSON.toJSONString(transaction);
-            LOG.info("doc to es is "+doc);
+            //LOG.info("doc to es is "+doc);
             request.source(doc, XContentType.JSON);
 
             IndexResponse indexResponse = null;

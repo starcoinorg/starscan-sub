@@ -33,7 +33,7 @@ public class TransactionRPCClient {
         if (response.indicatesSuccess()) {
             if (response != null && response.getResult() != null) {
                 String result = response.getResult().toString();
-                log.info("pending txn result is "+result);
+                //log.info("pending txn result is "+result);
                 transaction = JSON.parseObject(result, PendingTransaction.class);
             }
         } else
