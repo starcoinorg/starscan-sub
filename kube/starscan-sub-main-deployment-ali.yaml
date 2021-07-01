@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: starscan-sub-deployment
-  namespace: starcoin-proxima
+  namespace: starcoin-main
   labels:
     app: starscan-sub
 spec:
@@ -22,15 +22,15 @@ spec:
             - containerPort: 8200
           env:
             - name: HOSTS
-              value: "proxima1.seed.starcoin.org,proxima2.seed.starcoin.org,proxima3.seed.starcoin.org"
+              value: "main1.seed.starcoin.org,main2.seed.starcoin.org,main3.seed.starcoin.org,main4.seed.starcoin.org,main5.seed.starcoin.org,main6.seed.starcoin.org,main7.seed.starcoin.org,main8.seed.starcoin.org,main9.seed.starcoin.org"
             - name: NETWORK
-              value: "proxima"
+              value: "main"
             - name: STARCOIN_ES_URL
-              value: "search-starcoin-es2-47avtmhexhbg7qtynzebcnnu64.ap-northeast-1.es.amazonaws.com"
+              value: "es-cn-n6w24qcc200cq97zg.public.elasticsearch.aliyuncs.com"
             - name: STARCOIN_ES_PROTOCOL
-              value: "https"
+              value: "http"
             - name: STARCOIN_ES_PORT
-              value: "443"
+              value: "9200"
             - name: STARCOIN_ES_USER
               value: elastic
             - name: STARCOIN_ES_PWD
