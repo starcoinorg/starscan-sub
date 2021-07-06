@@ -3,15 +3,22 @@ package org.starcoin.subscribe.handler;
 import com.alibaba.fastjson.JSON;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +26,14 @@ import org.springframework.stereotype.Service;
 import org.starcoin.subscribe.bean.PendingTransaction;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class ElasticSearchHandler {
 
     public static final String TRANSACTION_INDEX = "txn_infos";
     private static final String PENDING_TXN_INDEX = "pending_txns";
+    private static final int ELASTICSEARCH_MAX_HITS = 10000;
     private static Logger LOG = LoggerFactory.getLogger(ElasticSearchHandler.class);
     @Autowired
     private RestHighLevelClient client;
@@ -39,6 +48,45 @@ public class ElasticSearchHandler {
             LOG.warn("transaction exist: {}", transaction.getTransactionHash());
         }
 
+    }
+
+    public Result<PendingTransaction> getPendingTransaction(String network, int count) {
+        SearchRequest searchRequest = new SearchRequest(ServiceUtils.getIndex(network, PENDING_TXN_INDEX));
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        //page size
+        searchSourceBuilder.size(count);
+        searchSourceBuilder.from(0);
+        searchSourceBuilder.sort("timestamp", SortOrder.DESC);
+        searchSourceBuilder.trackTotalHits(true);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
+        try {
+            searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            LOG.error("get pending transactions error:", e);
+            return null;
+        }
+        return ServiceUtils.getSearchResult(searchResponse, PendingTransaction.class);
+    }
+
+    public void deletePendingTransaction(String network, List<PendingTransaction> pendingTxns) {
+        if (pendingTxns.size() <= 0) {
+            return;
+        }
+        BulkRequest bulkRequest = new BulkRequest();
+        String index = ServiceUtils.getIndex(network, TRANSACTION_INDEX);
+        for (PendingTransaction pending : pendingTxns) {
+            DeleteRequest delete = new DeleteRequest(index);
+            delete.id(pending.getTransactionHash());
+            bulkRequest.add(delete);
+        }
+        try {
+            client.bulk(bulkRequest, RequestOptions.DEFAULT);
+            LOG.info("delete pending transaction ok");
+        } catch (IOException e) {
+            LOG.error("delete pending transaction error:", e);
+        }
     }
 
     private boolean checkExists(String network, PendingTransaction transaction) {
