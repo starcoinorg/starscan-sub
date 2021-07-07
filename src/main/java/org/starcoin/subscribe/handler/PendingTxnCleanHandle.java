@@ -45,8 +45,9 @@ public class PendingTxnCleanHandle extends QuartzJobBean {
             }
             if (deletings.size() > 0) {
                 elasticSearchHandler.deletePendingTransaction(network, deletings);
+                LOG.info("delete expire pending transaction ok: {}", deletings.size());
             }
-            LOG.info("delete expire pending transaction ok: {}", deletings.size());
+
         } else {
             LOG.info("current pending transaction is null");
         }

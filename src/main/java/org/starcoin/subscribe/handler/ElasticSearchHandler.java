@@ -75,7 +75,7 @@ public class ElasticSearchHandler {
             return;
         }
         BulkRequest bulkRequest = new BulkRequest();
-        String index = ServiceUtils.getIndex(network, TRANSACTION_INDEX);
+        String index = ServiceUtils.getIndex(network, PENDING_TXN_INDEX);
         for (PendingTransaction pending : pendingTxns) {
             DeleteRequest delete = new DeleteRequest(index);
             delete.id(pending.getTransactionHash());
