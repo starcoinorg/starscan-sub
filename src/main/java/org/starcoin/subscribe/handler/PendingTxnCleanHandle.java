@@ -1,13 +1,12 @@
 package org.starcoin.subscribe.handler;
 
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.starcoin.subscribe.bean.PendingTransaction;
+import org.starcoin.bean.PendingTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class PendingTxnCleanHandle extends QuartzJobBean {
     private ElasticSearchHandler elasticSearchHandler;
 
     @Override
-    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    protected void executeInternal(JobExecutionContext jobExecutionContext) {
         Result<PendingTransaction> result = elasticSearchHandler.getPendingTransaction(network, HANDLE_COUNT);
         List<PendingTransaction> txns = result.getContents();
         if (txns.size() > 0) {

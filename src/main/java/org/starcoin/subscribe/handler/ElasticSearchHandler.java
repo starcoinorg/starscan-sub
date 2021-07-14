@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.starcoin.subscribe.bean.PendingTransaction;
+import org.starcoin.bean.PendingTransaction;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,7 +60,7 @@ public class ElasticSearchHandler {
         searchSourceBuilder.sort("timestamp", SortOrder.DESC);
         searchSourceBuilder.trackTotalHits(true);
         searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = null;
+        SearchResponse searchResponse;
         try {
             searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -93,11 +93,7 @@ public class ElasticSearchHandler {
         try {
             GetRequest getRequest = new GetRequest(ServiceUtils.getIndex(network, TRANSACTION_INDEX), transaction.getTransactionHash());
             GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-            if (getResponse.isExists()) {
-                return true;
-            } else {
-                return false;
-            }
+            return getResponse.isExists();
         } catch (Exception e) {
             LOG.warn("access es failed", e);
             return false;
@@ -110,7 +106,6 @@ public class ElasticSearchHandler {
             request.id(transaction.getTransactionHash());
 
             String doc = JSON.toJSONString(transaction);
-            //LOG.info("doc to es is "+doc);
             request.source(doc, XContentType.JSON);
 
             IndexResponse indexResponse = null;

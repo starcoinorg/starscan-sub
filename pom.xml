@@ -8,6 +8,14 @@
     <artifactId>starscan-sub</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub starscan-sub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/starcoinorg/starscan-sub</url>
+        </repository>
+    </distributionManagement>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -21,6 +29,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.starcoin</groupId>
+            <artifactId>sdk</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -70,6 +83,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.4.3</version>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>
