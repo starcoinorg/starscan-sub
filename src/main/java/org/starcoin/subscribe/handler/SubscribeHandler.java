@@ -41,7 +41,8 @@ public class SubscribeHandler implements Runnable {
 
             for (PendingTransactionNotification notifications : flowableTxns.blockingIterable()) {
                 for (String notification : notifications.getParams().getResult()) {
-                    PendingTransaction transaction = rpc.getTransaction(notification);
+                    LOG.info("notification: {}", notification);
+                    PendingTransaction transaction = rpc.getPendingTransaction(notification);
                     elasticSearchHandler.saveTransaction(network, transaction);
                 }
             }
